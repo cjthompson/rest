@@ -156,6 +156,10 @@
           assert.same(uriTemplate.expand('{;list*}', params), ';list=red;list=green;list=blue')
           assert.same(uriTemplate.expand('{;keys}', params), ';keys=semi,%3B,dot,.,comma,%2C')
           assert.same(uriTemplate.expand('{;keys*}', params), ';semi=%3B;dot=.;comma=%2C')
+          assert.same(uriTemplate.expand('{;who,list}', params), ';who=fred;list=red,green,blue')
+          assert.same(uriTemplate.expand('{;who,list*}', params), ';who=fred;list=red;list=green;list=blue')
+          assert.same(uriTemplate.expand('{;who,keys}', params), ';who=fred;keys=semi,%3B,dot,.,comma,%2C')
+          assert.same(uriTemplate.expand('{;who,keys*}', params), ';who=fred;semi=%3B;dot=.;comma=%2C')
         },
         '3.2.8. Form-Style Query Expansion: {?var}': function () {
           assert.same(uriTemplate.expand('{?who}', params), '?who=fred')
@@ -168,6 +172,10 @@
           assert.same(uriTemplate.expand('{?list*}', params), '?list=red&list=green&list=blue')
           assert.same(uriTemplate.expand('{?keys}', params), '?keys=semi,%3B,dot,.,comma,%2C')
           assert.same(uriTemplate.expand('{?keys*}', params), '?semi=%3B&dot=.&comma=%2C')
+          assert.same(uriTemplate.expand('{?who,list}', params), '?who=fred&list=red,green,blue')
+          assert.same(uriTemplate.expand('{?who,list*}', params), '?who=fred&list=red&list=green&list=blue')
+          assert.same(uriTemplate.expand('{?who,keys}', params), '?who=fred&keys=semi,%3B,dot,.,comma,%2C')
+          assert.same(uriTemplate.expand('{?who,keys*}', params), '?who=fred&semi=%3B&dot=.&comma=%2C')
         },
         '3.2.9. Form-Style Query Continuation: {&var}': function () {
           assert.same(uriTemplate.expand('{&who}', params), '&who=fred')
@@ -181,6 +189,10 @@
           assert.same(uriTemplate.expand('{&list*}', params), '&list=red&list=green&list=blue')
           assert.same(uriTemplate.expand('{&keys}', params), '&keys=semi,%3B,dot,.,comma,%2C')
           assert.same(uriTemplate.expand('{&keys*}', params), '&semi=%3B&dot=.&comma=%2C')
+          assert.same(uriTemplate.expand('{&who,list}', params), '&who=fred&list=red,green,blue')
+          assert.same(uriTemplate.expand('{&who,list*}', params), '&who=fred&list=red&list=green&list=blue')
+          assert.same(uriTemplate.expand('{&who,keys}', params), '&who=fred&keys=semi,%3B,dot,.,comma,%2C')
+          assert.same(uriTemplate.expand('{&who,keys*}', params), '&who=fred&semi=%3B&dot=.&comma=%2C')
         }
       },
 

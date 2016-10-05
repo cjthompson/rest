@@ -27,8 +27,9 @@ var operations = {
 }
 
 function apply (operation, expression, params) {
-  return expression.split(',').reduce(function (result, variable) {
+  var params = expression.split(',').reduce(function (result, variable) {
     var opts = {}
+    var objectValue
     if (variable.slice(-1) === '*') {
       variable = variable.slice(0, -1)
       opts.explode = true
@@ -46,54 +47,53 @@ function apply (operation, expression, params) {
       return result
     }
     if (Array.isArray(value)) {
-      result = value.reduce(function (result, value) {
+      result.push(value.reduce(function (result, value) {
         if (result.length) {
           result += opts.explode ? operation.separator : ','
           if (operation.named && opts.explode) {
             result += operation.encoder(variable)
             result += value.length ? '=' : operation.empty
           }
-        } else {
-          result += operation.first
-          if (operation.named) {
-            result += operation.encoder(variable)
-            result += value.length ? '=' : operation.empty
-          }
+        } else if (operation.named) {
+          result += operation.encoder(variable)
+          result += value.length ? '=' : operation.empty
         }
         result += operation.encoder(value)
         return result
-      }, result)
+      }, ''))
     } else if (typeof value === 'object') {
-      result = Object.keys(value).reduce(function (result, name) {
+      objectValue = Object.keys(value).reduce(function (result, name) {
         if (result.length) {
           result += opts.explode ? operation.separator : ','
-        } else {
-          result += operation.first
-          if (operation.named && !opts.explode) {
-            result += operation.encoder(variable)
-            result += value[name].length ? '=' : operation.empty
-          }
+        } else if (operation.named && !opts.explode) {
+          result += operation.encoder(variable)
+          result += value[name].length ? '=' : operation.empty
         }
         result += operation.encoder(name)
         result += opts.explode ? '=' : ','
         result += operation.encoder(value[name])
         return result
-      }, result)
+      }, '')
+      if (objectValue) result.push(objectValue);
     } else {
       value = String(value)
       if (opts.maxLength) {
         value = value.slice(0, opts.maxLength)
       }
-      result += result.length ? operation.separator : operation.first
       if (operation.named) {
-        result += operation.encoder(variable)
-        result += value.length ? '=' : operation.empty
+        result.push(operation.encoder(variable)
+          + (value.length ? '=' : operation.empty)
+          + operation.encoder(value)
+        )
+      } else {
+        result.push(operation.encoder(value))
       }
-      result += operation.encoder(value)
     }
 
     return result
-  }, '')
+  }, [])
+
+  return params.length ? operation.first + params.join(operation.separator) : ''
 }
 
 function expandExpression (expression, params) {
